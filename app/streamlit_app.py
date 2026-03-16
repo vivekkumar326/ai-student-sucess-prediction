@@ -7,12 +7,18 @@ import google.generativeai as genai
 # -----------------------------------
 # Configure Gemini API
 # -----------------------------------
+# GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-GEMINI_API_KEY = "AIzaSyDx-0UhW5YQU62phxm9EQyDdlbZRo4Ta4s"
+# genai.configure(api_key=GEMINI_API_KEY)
 
-genai.configure(api_key=GEMINI_API_KEY)
+# gemini_model = genai.GenerativeModel("gemini-2.5-flash")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-gemini_model = genai.GenerativeModel("gemini-2.5-flash")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+    gemini_model = genai.GenerativeModel("gemini-2.5-flash")
+else:
+    gemini_model = None
 
 # -----------------------------------
 # Load Model Files
@@ -27,31 +33,25 @@ features = joblib.load(os.path.join(BASE_DIR, "model", "feature_columns.pkl"))
 # -----------------------------------
 # Gemini Explanation Function
 # -----------------------------------
-
 def explain_prediction(student_data, prediction):
 
     prompt = f"""
 You are an AI academic advisor helping a university understand student performance.
-
-A machine learning model predicted the student's academic outcome.
 
 Prediction: {prediction}
 
 Student Data:
 {student_data}
 
-Please provide:
-
-1. A simple explanation of why this prediction may have occurred.
-2. Key academic or financial factors influencing this outcome.
-3. Practical recommendations the university can take to support the student.
-
-Use clear and simple language suitable for a university dashboard.
+Explain the reason and provide recommendations.
 """
 
     try:
-        response = gemini_model.generate_content(prompt)
-        return response.text
+        if gemini_model:
+            response = gemini_model.generate_content(prompt)
+            return response.text
+        else:
+            return "AI explanation unavailable. API key missing."
 
     except Exception as e:
         return f"AI explanation unavailable: {e}"
