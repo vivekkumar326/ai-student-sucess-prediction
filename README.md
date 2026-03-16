@@ -87,7 +87,7 @@ This makes the system more interpretable and useful for decision-makers.
 
 ▶️ Running the Project
 1. Clone the repository
-git clone https://github.com/yourusername/ai-student-success-prediction.git
+git clone https://github.com/vivekkumar326/ai-student-sucess-prediction
 2. Navigate to the project
 cd ai-student-success-prediction
 3. Create virtual environment
